@@ -1,0 +1,13 @@
+name: KSC-RnD-2024-ntuple-py311
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - numpy
+  - awkward
+  - uproot
+  - hist
+  - matplotlib
+  - mplhep
+  - ipykernel
+  - tqdm
