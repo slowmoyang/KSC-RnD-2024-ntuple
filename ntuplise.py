@@ -87,9 +87,11 @@ def run(input_path: Path,
     output = {}
 
     # track
-    for feature in ['pt', 'eta', 'phi']:
-        key = f'track_{feature}'
-        output[key] = ak.values_astype(data[key], np.float32)
+    track_pt = ak.values_astype(data['track_pt'], np.float32)
+    track_phi = ak.values_astype(data['track_phi'], np.float32)
+    output['track_px'] = track_pt * np.cos(track_phi)
+    output['track_py'] = track_pt * np.sin(track_phi)
+    output['track_eta'] = ak.values_astype(data['track_eta'], np.float32)
 
     for feature in ['pid', 'charge', 'is_reco_pu']:
         key = f'track_{feature}'
@@ -108,10 +110,16 @@ def run(input_path: Path,
     for feature in ['pt', 'eta', 'phi']:
         arrays = [ak.values_astype(data[f'{prefix}_{feature}'], np.float32)
                   for prefix in ['neutral_hadron', 'photon']]
-        output[f'tower_{feature}'] = ak.concatenate(
+        data[f'tower_{feature}'] = ak.concatenate(
             arrays=arrays,
             axis=1
         )
+
+    tower_pt = ak.values_astype(data['tower_pt'], np.float32)
+    tower_phi = ak.values_astype(data['tower_phi'], np.float32)
+    output['tower_px'] = tower_pt * np.cos(tower_phi)
+    output['tower_py'] = tower_pt * np.sin(tower_phi)
+    output['tower_eta'] = ak.values_astype(data['tower_eta'], np.float32)
 
     data['neutral_hadron_is_hadron'] = ak.ones_like(data['neutral_hadron_pt'], dtype=np.int64)
     data['photon_is_hadron'] = ak.zeros_like(data['photon_pt'], dtype=np.int64)
